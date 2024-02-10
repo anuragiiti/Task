@@ -59,20 +59,29 @@ outside_picking_count = outside_picked.groupby(outside_picked['datetime'].dt.dat
 # Streamlit App
 st.title('Streamlit App for Task 1, Task 2, and Task 3')
 
-# User Input Section
-user_data_point_str = st.text_input("Enter data point for Task-2 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
-user_data_point = list(map(float, user_data_point_str.split(',')))
-user_data_point = [user_data_point]
+# User Input Section for Task-1
+st.header("Task-1: K-Means Clustering")
+user_data_point_str_task1 = st.text_input("Enter data point for Task-1 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
+user_data_point_task1 = list(map(float, user_data_point_str_task1.split(',')))
+user_data_point_task1 = [user_data_point_task1]
 
-# Predictions
-predicted_cluster = kmeans.predict(user_data_point)
-predicted_svm = classifier_svm.predict(sc.transform(user_data_point))
-predicted_nb = classifier_nb.predict(sc.transform(user_data_point))
-predicted_rf = classifier_rf.predict(sc.transform(user_data_point))
+# Predictions for Task-1
+predicted_cluster_task1 = kmeans.predict(user_data_point_task1)
+st.write(f"The data point {user_data_point_task1} belongs to Cluster {predicted_cluster_task1[0]}")
 
-# Display Predictions
+# User Input Section for Task-2
+st.header("Task-2: Classification Models")
+user_data_point_str_task2 = st.text_input("Enter data point for Task-2 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
+user_data_point_task2 = list(map(float, user_data_point_str_task2.split(',')))
+user_data_point_task2 = [user_data_point_task2]
+
+# Predictions for Task-2
+predicted_svm = classifier_svm.predict(sc.transform(user_data_point_task2))
+predicted_nb = classifier_nb.predict(sc.transform(user_data_point_task2))
+predicted_rf = classifier_rf.predict(sc.transform(user_data_point_task2))
+
 st.header("Predictions for Task-2:")
-st.write(f"The data point {user_data_point} belongs to Cluster {predicted_cluster[0]}")
+st.write(f"The data point {user_data_point_task2} belongs to Cluster {predicted_cluster_task1[0]}")
 
 st.header("Predictions for Task-2 using SVM:")
 st.write(f"Prediction: {predicted_svm[0]}")
