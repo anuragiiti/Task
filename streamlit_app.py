@@ -1,110 +1,98 @@
-import streamlit as st
 import numpy as np
 import pandas as pd
-
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import LabelEncoder
+import streamlit as st
+
+# Importing datasets
+train_dataset = pd.read_excel('train.xlsx')
+X_train = train_dataset.iloc[:, :-1].values
+y_train = train_dataset.iloc[:, -1].values
 
 # TASK-1: K-MEANS CLUSTERING
 
-# Load datasets
-train_dataset = pd.read_excel('train.xlsx')
-test_dataset = pd.read_excel('test.xlsx')
 
-# KMeans clustering
-wcss = []
-for i in range(1, 11):
-    kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
-    kmeans.fit(train_dataset.iloc[:, :-1].values)
-    wcss.append(kmeans.inertia_)
-
-# Number of clusters found is 4
+# The number of clusters found is 4
 kmeans = KMeans(n_clusters=4, init='k-means++', random_state=42)
-kmeans.fit_predict(train_dataset.iloc[:, :-1].values)
-
-# User input
-user_data_point_str = st.sidebar.text_input("Enter data point (comma-separated):", "")
-if user_data_point_str:
-    user_data_point = list(map(float, user_data_point_str.split(',')))
-    user_data_point = [user_data_point]
-
-    # Predict cluster
-    predicted_cluster = kmeans.predict(user_data_point)
-
-    # Display result
-    st.write(f"Task 1: The data point {user_data_point} belongs to Cluster {predicted_cluster[0]}")
+kmeans.fit_predict(X_train)
 
 # TASK-2: USING FEATURE SCALING
+sc = StandardScaler()
+X_train_fs = sc.fit_transform(X_train)
 
-# Load datasets
-X_train_fs = StandardScaler().fit_transform(train_dataset.iloc[:, :-1].values)
-X_test_fs = StandardScaler().fit_transform(test_dataset.iloc[:, :].values)
-
-# SVM model
+# Training the KERNEL SVM model on the Training set
 classifier_svm = SVC(kernel='rbf', random_state=0)
-classifier_svm.fit(X_train_fs, train_dataset.iloc[:, -1].values)
+classifier_svm.fit(X_train_fs, y_train)
 
-# Naive Bayes model
+# Training the NAIVE BAYES model on the Training set
 classifier_nb = GaussianNB()
-classifier_nb.fit(X_train_fs, train_dataset.iloc[:, -1].values)
+classifier_nb.fit(X_train_fs, y_train)
 
-# Random Forest model
+# Training the RANDOM FOREST model on the Training set
 classifier_rf = RandomForestClassifier(n_estimators=30, criterion='entropy', random_state=0)
-classifier_rf.fit(X_train_fs, train_dataset.iloc[:, -1].values)
+classifier_rf.fit(X_train_fs, y_train)
 
 
 
-# User input for task-2
-user_data_point_str_2 = st.sidebar.text_input("Enter data point for Task-2 (comma-separated):", "")
-if user_data_point_str_2:
-    user_data_point_2 = list(map(float, user_data_point_str_2.split(',')))
-    user_data_point_2 = [user_data_point_2]
+# Using Label Encoding For y_train
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+y_train_le = le.fit_transform(y_train)
 
-    # Predictions
-    y_pred_svm = classifier_svm.predict([user_data_point_2])
-    y_pred_nb = classifier_nb.predict([user_data_point_2])
-    y_pred_rf = classifier_rf.predict([user_data_point_2])
-   
+ann.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+ann.fit(X_train, y_train_le, batch_size=100, epochs=100)
 
-    # Display results
-    st.write(f"Task 2:")
-    st.write(f"SVM Prediction: {y_pred_svm[0]}")
-    st.write(f"Naive Bayes Prediction: {y_pred_nb[0]}")
-    st.write(f"Random Forest Prediction: {y_pred_rf[0]}")
-   
-
-# TASK-3:
-
-# Load dataset
+# TASK-3: PROCESSING DATASET
 dataset = pd.read_excel('rawdata.xlsx')
 dataset['datetime'] = pd.to_datetime(dataset['date'])
-
-# Dropping unnecessary columns
 dataset = dataset.drop(['date', 'time'], axis=1)
 
-# Filtering Rows With 'placed' Activity For Inside And Outside
 inside_placed = dataset[(dataset['activity'] == 'placed') & (dataset['position'].str.lower() == 'inside')]
 outside_placed = dataset[(dataset['activity'] == 'placed') & (dataset['position'].str.lower() == 'outside')]
 
-# Calculating Date-Wise Total Duration For Inside And Outside
 inside_duration = inside_placed.groupby(inside_placed['datetime'].dt.date)['number'].count()
 outside_duration = outside_placed.groupby(outside_placed['datetime'].dt.date)['number'].count()
 
-# Filtering Rows With 'picked' Activity For Inside And Outside
 inside_picked = dataset[(dataset['activity'] == 'picked') & (dataset['position'].str.lower() == 'inside')]
 outside_picked = dataset[(dataset['activity'] == 'picked') & (dataset['position'].str.lower() == 'outside')]
 
-# Calculating Date-Wise Number Of Picking Activities For Inside And Outside
 inside_picking_count = inside_picked.groupby(inside_picked['datetime'].dt.date)['number'].count()
 outside_picking_count = outside_picked.groupby(outside_picked['datetime'].dt.date)['number'].count()
 
-# Display results for Task 3
-st.write("Task 3:")
+# Streamlit App
+st.title('Streamlit App for Task 1, Task 2, and Task 3')
+
+# User Input Section
+user_data_point_str = st.text_input("Enter data point for Task-2 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
+user_data_point = list(map(float, user_data_point_str.split(',')))
+user_data_point = [user_data_point]
+
+# Predictions
+predicted_cluster = kmeans.predict(user_data_point)
+predicted_svm = classifier_svm.predict(sc.transform(user_data_point))
+predicted_nb = classifier_nb.predict(sc.transform(user_data_point))
+predicted_rf = classifier_rf.predict(sc.transform(user_data_point))
+predicted_ann = (ann.predict(sc.transform(user_data_point)) > 0.5).astype(int)
+
+# Display Predictions
+st.header("Predictions for Task-2:")
+st.write(f"The data point {user_data_point} belongs to Cluster {predicted_cluster[0]}")
+
+st.header("Predictions for Task-2 using SVM:")
+st.write(f"Prediction: {predicted_svm[0]}")
+
+st.header("Predictions for Task-2 using Naive Bayes:")
+st.write(f"Prediction: {predicted_nb[0]}")
+
+st.header("Predictions for Task-2 using Random Forest:")
+st.write(f"Prediction: {predicted_rf[0]}")
+
+# Display Results for Task-3
+st.header("Results for Task-3:")
 st.write("Date-wise Total Duration for Inside:")
 st.write(inside_duration)
 
