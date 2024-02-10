@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -14,7 +13,11 @@ X_train = train_dataset.iloc[:, :-1].values
 y_train = train_dataset.iloc[:, -1].values
 
 # TASK-1: K-MEANS CLUSTERING
-
+wcss = []
+for i in range(1, 11):
+    kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
+    kmeans.fit(X_train)
+    wcss.append(kmeans.inertia_)
 
 # The number of clusters found is 4
 kmeans = KMeans(n_clusters=4, init='k-means++', random_state=42)
@@ -35,16 +38,6 @@ classifier_nb.fit(X_train_fs, y_train)
 # Training the RANDOM FOREST model on the Training set
 classifier_rf = RandomForestClassifier(n_estimators=30, criterion='entropy', random_state=0)
 classifier_rf.fit(X_train_fs, y_train)
-
-
-
-# Using Label Encoding For y_train
-from sklearn.preprocessing import LabelEncoder
-le = LabelEncoder()
-y_train_le = le.fit_transform(y_train)
-
-ann.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-ann.fit(X_train, y_train_le, batch_size=100, epochs=100)
 
 # TASK-3: PROCESSING DATASET
 dataset = pd.read_excel('rawdata.xlsx')
@@ -76,7 +69,6 @@ predicted_cluster = kmeans.predict(user_data_point)
 predicted_svm = classifier_svm.predict(sc.transform(user_data_point))
 predicted_nb = classifier_nb.predict(sc.transform(user_data_point))
 predicted_rf = classifier_rf.predict(sc.transform(user_data_point))
-predicted_ann = (ann.predict(sc.transform(user_data_point)) > 0.5).astype(int)
 
 # Display Predictions
 st.header("Predictions for Task-2:")
