@@ -11,7 +11,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 
-import tensorflow as tf
+
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -56,15 +56,6 @@ classifier_nb.fit(X_train_fs, train_dataset.iloc[:, -1].values)
 # Random Forest model
 classifier_rf = RandomForestClassifier(n_estimators=30, criterion='entropy', random_state=0)
 classifier_rf.fit(X_train_fs, train_dataset.iloc[:, -1].values)
-
-# Neural Network model
-ann = tf.keras.models.Sequential()
-ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
-ann.add(tf.keras.layers.Dense(units=6, activation='relu'))
-ann.add(tf.keras.layers.Dense(units=1, activation='sigmoid'))
-y_train_le = LabelEncoder().fit_transform(train_dataset.iloc[:, -1].values)
-ann.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-ann.fit(train_dataset.iloc[:, :-1].values, y_train_le, batch_size=100, epochs=100)
 
 # User input for Task-2
 user_data_point_str_2 = st.sidebar.text_input("Enter data point for Task-2 (comma-separated):", "")
