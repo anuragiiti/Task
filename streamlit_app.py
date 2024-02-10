@@ -10,7 +10,7 @@ Original file is located at
 import streamlit as st
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+
 import tensorflow as tf
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
@@ -24,11 +24,6 @@ train_dataset = pd.read_excel('train.xlsx')
 test_dataset = pd.read_excel('test.xlsx')
 
 # KMeans clustering
-wcss = []
-for i in range(1, 11):
-    kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)
-    kmeans.fit(train_dataset.iloc[:, :-1].values)
-    wcss.append(kmeans.inertia_)
 
 # Number of clusters found is 4
 kmeans = KMeans(n_clusters=4, init='k-means++', random_state=42)
