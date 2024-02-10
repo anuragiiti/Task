@@ -60,25 +60,29 @@ outside_picking_count = outside_picked.groupby(outside_picked['datetime'].dt.dat
 st.title('Streamlit App for Task 1, Task 2, and Task 3')
 
 # User Input Section for Task-1
-st.header("Task-1: K-Means Clustering")
-user_data_point_str_task1 = st.text_input("Enter data point for Task-1 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
-user_data_point_task1 = list(map(float, user_data_point_str_task1.split(',')))
-user_data_point_task1 = [user_data_point_task1]
+with st.form(key='task1_form'):
+    st.header("Task-1: K-Means Clustering")
+    user_data_point_str_task1 = st.text_input("Enter data point for Task-1 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
+    user_data_point_task1 = list(map(float, user_data_point_str_task1.split(',')))
+    user_data_point_task1 = [user_data_point_task1]
+    submit_task1 = st.form_submit_button("Run Task-1")
 
-# Check if Enter key is pressed
-if st.button("Run Task-1"):
+# Check if the form is submitted
+if submit_task1:
     # Predictions for Task-1
     predicted_cluster_task1 = kmeans.predict(user_data_point_task1)
     st.write(f"The data point {user_data_point_task1} belongs to Cluster {predicted_cluster_task1[0]}")
 
 # User Input Section for Task-2
-st.header("Task-2: Classification Models")
-user_data_point_str_task2 = st.text_input("Enter data point for Task-2 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
-user_data_point_task2 = list(map(float, user_data_point_str_task2.split(',')))
-user_data_point_task2 = [user_data_point_task2]
+with st.form(key='task2_form'):
+    st.header("Task-2: Classification Models")
+    user_data_point_str_task2 = st.text_input("Enter data point for Task-2 (comma-separated):", "-77,-74,-71,-76,-65,-63,-66,-52,-55,-75,-72,-75,-74,-61,-64,-63,-53,-63")
+    user_data_point_task2 = list(map(float, user_data_point_str_task2.split(',')))
+    user_data_point_task2 = [user_data_point_task2]
+    submit_task2 = st.form_submit_button("Run Task-2")
 
-# Check if Enter key is pressed
-if st.button("Run Task-2"):
+# Check if the form is submitted
+if submit_task2:
     # Predictions for Task-2
     predicted_svm = classifier_svm.predict(sc.transform(user_data_point_task2))
     predicted_nb = classifier_nb.predict(sc.transform(user_data_point_task2))
