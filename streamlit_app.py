@@ -65,9 +65,11 @@ user_data_point_str_task1 = st.text_input("Enter data point for Task-1 (comma-se
 user_data_point_task1 = list(map(float, user_data_point_str_task1.split(',')))
 user_data_point_task1 = [user_data_point_task1]
 
-# Predictions for Task-1
-predicted_cluster_task1 = kmeans.predict(user_data_point_task1)
-st.write(f"The data point {user_data_point_task1} belongs to Cluster {predicted_cluster_task1[0]}")
+# Check if Enter key is pressed
+if st.button("Run Task-1"):
+    # Predictions for Task-1
+    predicted_cluster_task1 = kmeans.predict(user_data_point_task1)
+    st.write(f"The data point {user_data_point_task1} belongs to Cluster {predicted_cluster_task1[0]}")
 
 # User Input Section for Task-2
 st.header("Task-2: Classification Models")
@@ -75,22 +77,24 @@ user_data_point_str_task2 = st.text_input("Enter data point for Task-2 (comma-se
 user_data_point_task2 = list(map(float, user_data_point_str_task2.split(',')))
 user_data_point_task2 = [user_data_point_task2]
 
-# Predictions for Task-2
-predicted_svm = classifier_svm.predict(sc.transform(user_data_point_task2))
-predicted_nb = classifier_nb.predict(sc.transform(user_data_point_task2))
-predicted_rf = classifier_rf.predict(sc.transform(user_data_point_task2))
+# Check if Enter key is pressed
+if st.button("Run Task-2"):
+    # Predictions for Task-2
+    predicted_svm = classifier_svm.predict(sc.transform(user_data_point_task2))
+    predicted_nb = classifier_nb.predict(sc.transform(user_data_point_task2))
+    predicted_rf = classifier_rf.predict(sc.transform(user_data_point_task2))
 
-st.header("Predictions for Task-2:")
-st.write(f"The data point {user_data_point_task2} belongs to Cluster {predicted_cluster_task1[0]}")
+    st.header("Predictions for Task-2:")
+    st.write(f"The data point {user_data_point_task2} belongs to Cluster {predicted_cluster_task1[0]}")
 
-st.header("Predictions for Task-2 using SVM:")
-st.write(f"Prediction: {predicted_svm[0]}")
+    st.header("Predictions for Task-2 using SVM:")
+    st.write(f"Prediction: {predicted_svm[0]}")
 
-st.header("Predictions for Task-2 using Naive Bayes:")
-st.write(f"Prediction: {predicted_nb[0]}")
+    st.header("Predictions for Task-2 using Naive Bayes:")
+    st.write(f"Prediction: {predicted_nb[0]}")
 
-st.header("Predictions for Task-2 using Random Forest:")
-st.write(f"Prediction: {predicted_rf[0]}")
+    st.header("Predictions for Task-2 using Random Forest:")
+    st.write(f"Prediction: {predicted_rf[0]}")
 
 # Display Results for Task-3
 st.header("Results for Task-3:")
